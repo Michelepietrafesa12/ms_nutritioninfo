@@ -118,22 +118,17 @@
             {* Vitamine e Minerali *}
             {if $vitamine_minerali && count($vitamine_minerali) > 0}
                 <tr class="ms-nutrition-row ms-nutrition-separator">
-                    <td class="ms-nutrition-label ms-nutrition-section-title" {if $has_vnr}colspan="1"{else}colspan="2"{/if}>
+                    <td colspan="2" class="ms-nutrition-label ms-nutrition-section-title">
                         {l s='VITAMINE E MINERALI' mod='ms_nutritioninfo'}
                     </td>
-                    {if $has_vnr}
-                        <td class="ms-nutrition-value ms-nutrition-section-title">% {l s='VNR' mod='ms_nutritioninfo'}</td>
-                    {/if}
                 </tr>
                 {foreach $vitamine_minerali as $vit}
                     <tr class="ms-nutrition-row ms-nutrition-vitamin-row">
                         <td class="ms-nutrition-label">{$vit.nome|escape:'htmlall':'UTF-8'}</td>
                         <td class="ms-nutrition-value">
                             {$vit.quantita|escape:'htmlall':'UTF-8'} {$vit.unita|escape:'htmlall':'UTF-8'}
-                            {if $has_vnr}
-                                <span class="ms-nutrition-vnr">
-                                    {if $vit.vnr != ''}{$vit.vnr|escape:'htmlall':'UTF-8'}%{/if}
-                                </span>
+                            {if $has_vnr && $vit.vnr != ''}
+                                <span class="ms-nutrition-vnr">({$vit.vnr|escape:'htmlall':'UTF-8'}% {l s='VNR' mod='ms_nutritioninfo'})</span>
                             {/if}
                         </td>
                     </tr>
@@ -141,21 +136,21 @@
             {/if}
 
             {* Ingredienti *}
-            {if $nutrition->ingredienti && $nutrition->ingredienti != ''}
+            {if $safe_ingredienti != ''}
                 <tr class="ms-nutrition-row ms-nutrition-separator">
                     <td colspan="2" class="ms-nutrition-text-section">
                         <strong>{l s='INGREDIENTI:' mod='ms_nutritioninfo'}</strong><br />
-                        {$nutrition->ingredienti nofilter}
+                        {$safe_ingredienti nofilter}
                     </td>
                 </tr>
             {/if}
 
             {* Allergeni *}
-            {if $nutrition->allergeni && $nutrition->allergeni != ''}
+            {if $safe_allergeni != ''}
                 <tr class="ms-nutrition-row ms-nutrition-separator">
                     <td colspan="2" class="ms-nutrition-text-section">
                         <strong>{l s='ALLERGENI:' mod='ms_nutritioninfo'}</strong>
-                        {$nutrition->allergeni nofilter}
+                        {$safe_allergeni nofilter}
                     </td>
                 </tr>
             {/if}

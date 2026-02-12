@@ -12,7 +12,20 @@ document.addEventListener('DOMContentLoaded', function () {
     var container = document.getElementById('ms-vitamine-container');
     var addBtn = document.getElementById('ms-add-vitamina');
 
+    // Stringhe traducibili lette dai data-attributes del pulsante
+    var translations = {
+        placeholderNome: 'Nome (es: Vitamina C)',
+        placeholderQuantita: 'Quantità',
+        placeholderVnr: '%VNR',
+        titleRimuovi: 'Rimuovi'
+    };
+
     if (addBtn) {
+        translations.placeholderNome = addBtn.getAttribute('data-placeholder-nome') || translations.placeholderNome;
+        translations.placeholderQuantita = addBtn.getAttribute('data-placeholder-quantita') || translations.placeholderQuantita;
+        translations.placeholderVnr = addBtn.getAttribute('data-placeholder-vnr') || translations.placeholderVnr;
+        translations.titleRimuovi = addBtn.getAttribute('data-title-rimuovi') || translations.titleRimuovi;
+
         addBtn.addEventListener('click', function () {
             addVitaminaRow('', '', 'mg', '');
         });
@@ -22,17 +35,21 @@ document.addEventListener('DOMContentLoaded', function () {
      * Aggiunge una nuova riga per vitamina/minerale.
      */
     function addVitaminaRow(nome, quantita, unita, vnr) {
+        if (!container) {
+            return;
+        }
+
         var row = document.createElement('div');
         row.className = 'ms-vitamina-row form-group';
 
         row.innerHTML =
             '<div class="col-lg-3">' +
                 '<input type="text" name="nutrition_vit_nome[]" class="form-control" ' +
-                    'value="' + escapeHtml(nome) + '" placeholder="Nome (es: Vitamina C)" />' +
+                    'value="' + escapeHtml(nome) + '" placeholder="' + escapeHtml(translations.placeholderNome) + '" />' +
             '</div>' +
             '<div class="col-lg-2">' +
                 '<input type="number" step="0.01" min="0" name="nutrition_vit_quantita[]" class="form-control" ' +
-                    'value="' + escapeHtml(quantita) + '" placeholder="Quantità" />' +
+                    'value="' + escapeHtml(quantita) + '" placeholder="' + escapeHtml(translations.placeholderQuantita) + '" />' +
             '</div>' +
             '<div class="col-lg-2">' +
                 '<select name="nutrition_vit_unita[]" class="form-control">' +
@@ -44,12 +61,12 @@ document.addEventListener('DOMContentLoaded', function () {
             '<div class="col-lg-2">' +
                 '<div class="input-group">' +
                     '<input type="number" step="0.01" min="0" name="nutrition_vit_vnr[]" class="form-control" ' +
-                        'value="' + escapeHtml(vnr) + '" placeholder="%VNR" />' +
+                        'value="' + escapeHtml(vnr) + '" placeholder="' + escapeHtml(translations.placeholderVnr) + '" />' +
                     '<span class="input-group-addon">%</span>' +
                 '</div>' +
             '</div>' +
             '<div class="col-lg-1">' +
-                '<button type="button" class="btn btn-danger ms-remove-vitamina" title="Rimuovi">' +
+                '<button type="button" class="btn btn-danger ms-remove-vitamina" title="' + escapeHtml(translations.titleRimuovi) + '">' +
                     '<i class="icon-trash"></i>' +
                 '</button>' +
             '</div>';
@@ -66,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (btn) {
                 var row = btn.closest('.ms-vitamina-row');
                 if (row) {
-                    row.remove();
+                    row.parentNode.removeChild(row);
                 }
             }
         });
@@ -120,14 +137,14 @@ document.addEventListener('DOMContentLoaded', function () {
     if (nutritionPanel) {
         var numInputs = nutritionPanel.querySelectorAll('input[type="number"]');
 
-        numInputs.forEach(function (input) {
-            input.addEventListener('change', function () {
+        for (var i = 0; i < numInputs.length; i++) {
+            numInputs[i].addEventListener('change', function () {
                 var val = parseFloat(this.value);
                 if (!isNaN(val) && val < 0) {
                     this.value = 0;
                 }
             });
-        });
+        }
     }
 
     /* =========================================================================

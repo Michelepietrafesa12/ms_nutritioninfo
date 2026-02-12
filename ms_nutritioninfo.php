@@ -176,7 +176,7 @@ class Ms_NutritionInfo extends Module
         }
 
         $nutrition->active = (int) Tools::getValue('nutrition_active', 0);
-        $nutrition->porzione = pSQL(Tools::getValue('nutrition_porzione', '100g'));
+        $nutrition->porzione = Tools::getValue('nutrition_porzione', '100g');
 
         // Campi numerici
         $numericFields = array(
@@ -205,12 +205,14 @@ class Ms_NutritionInfo extends Module
         $vitamine = array();
         if (is_array($vitNomi)) {
             foreach ($vitNomi as $i => $nome) {
-                $nome = trim(pSQL($nome));
+                $nome = trim($nome);
                 if (!empty($nome)) {
+                    $allowedUnits = array('mg', 'µg', 'g');
+                    $unita = isset($vitUnita[$i]) && in_array($vitUnita[$i], $allowedUnits) ? $vitUnita[$i] : 'mg';
                     $vitamine[] = array(
                         'nome' => $nome,
                         'quantita' => isset($vitQuantita[$i]) ? (string) (float) str_replace(',', '.', $vitQuantita[$i]) : '',
-                        'unita' => isset($vitUnita[$i]) ? pSQL($vitUnita[$i]) : 'mg',
+                        'unita' => $unita,
                         'vnr' => isset($vitVnr[$i]) && $vitVnr[$i] !== '' ? (string) (float) str_replace(',', '.', $vitVnr[$i]) : '',
                     );
                 }
@@ -221,7 +223,7 @@ class Ms_NutritionInfo extends Module
         // Campi testo
         $nutrition->ingredienti = Tools::getValue('nutrition_ingredienti', '');
         $nutrition->allergeni = Tools::getValue('nutrition_allergeni', '');
-        $nutrition->note = pSQL(Tools::getValue('nutrition_note', ''));
+        $nutrition->note = Tools::getValue('nutrition_note', '');
 
         if ($isNew) {
             $nutrition->date_add = date('Y-m-d H:i:s');
@@ -272,10 +274,17 @@ class Ms_NutritionInfo extends Module
             }
         }
 
+        // Sanitizza HTML di ingredienti e allergeni: consenti solo tag di formattazione base
+        $allowedTags = '<b><strong><i><em><br><p><ul><ol><li><span>';
+        $safeIngredienti = !empty($nutrition->ingredienti) ? strip_tags($nutrition->ingredienti, $allowedTags) : '';
+        $safeAllergeni = !empty($nutrition->allergeni) ? strip_tags($nutrition->allergeni, $allowedTags) : '';
+
         $this->context->smarty->assign(array(
             'nutrition' => $nutrition,
             'vitamine_minerali' => $vitamine_minerali,
             'has_vnr' => $hasVnr,
+            'safe_ingredienti' => $safeIngredienti,
+            'safe_allergeni' => $safeAllergeni,
         ));
 
         $content = $this->display(__FILE__, 'views/templates/hook/nutrition_front.tpl');

@@ -287,7 +287,11 @@
 
             <div class="form-group">
                 <div class="col-lg-offset-0 col-lg-12">
-                    <button type="button" id="ms-add-vitamina" class="btn btn-default">
+                    <button type="button" id="ms-add-vitamina" class="btn btn-default"
+                        data-placeholder-nome="{l s='Nome (es: Vitamina C)' mod='ms_nutritioninfo'}"
+                        data-placeholder-quantita="{l s='Quantità' mod='ms_nutritioninfo'}"
+                        data-placeholder-vnr="{l s='%VNR' mod='ms_nutritioninfo'}"
+                        data-title-rimuovi="{l s='Rimuovi' mod='ms_nutritioninfo'}">
                         <i class="icon-plus"></i> {l s='Aggiungi vitamina/minerale' mod='ms_nutritioninfo'}
                     </button>
                 </div>
@@ -305,7 +309,7 @@
                 <div class="col-lg-9">
                     <textarea name="nutrition_ingredienti" id="nutrition_ingredienti"
                         class="form-control ms-nutrition-textarea autoload_rte"
-                        rows="4">{if $nutrition}{$nutrition->ingredienti|escape:'htmlall':'UTF-8'}{/if}</textarea>
+                        rows="4">{if $nutrition}{$nutrition->ingredienti nofilter}{/if}</textarea>
                 </div>
             </div>
 
@@ -316,7 +320,7 @@
                 <div class="col-lg-9">
                     <textarea name="nutrition_allergeni" id="nutrition_allergeni"
                         class="form-control ms-nutrition-textarea autoload_rte"
-                        rows="3">{if $nutrition}{$nutrition->allergeni|escape:'htmlall':'UTF-8'}{/if}</textarea>
+                        rows="3">{if $nutrition}{$nutrition->allergeni nofilter}{/if}</textarea>
                     <p class="help-block">
                         {l s='Usa il grassetto per evidenziare gli allergeni come da normativa EU.' mod='ms_nutritioninfo'}
                     </p>

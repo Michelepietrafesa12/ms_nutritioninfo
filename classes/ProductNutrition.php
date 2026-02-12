@@ -153,8 +153,8 @@ class ProductNutrition extends ObjectModel
                 'validate' => 'isUnsignedFloat',
             ),
             'vitamine_minerali' => array(
-                'type' => self::TYPE_HTML,
-                'validate' => 'isCleanHtml',
+                'type' => self::TYPE_STRING,
+                'validate' => 'isString',
             ),
             'ingredienti' => array(
                 'type' => self::TYPE_HTML,
@@ -165,7 +165,7 @@ class ProductNutrition extends ObjectModel
                 'validate' => 'isCleanHtml',
             ),
             'note' => array(
-                'type' => self::TYPE_HTML,
+                'type' => self::TYPE_STRING,
                 'validate' => 'isCleanHtml',
             ),
             'active' => array(
@@ -224,7 +224,7 @@ class ProductNutrition extends ObjectModel
     }
 
     /**
-     * Verifica se almeno un campo numerico nutrizionale è compilato.
+     * Verifica se almeno un campo nutrizionale è compilato.
      *
      * @return bool
      */
@@ -237,9 +237,20 @@ class ProductNutrition extends ObjectModel
         );
 
         foreach ($numericFields as $field) {
-            if ($this->{$field} !== null && (float) $this->{$field} > 0) {
+            if ($this->{$field} !== null && $this->{$field} !== '') {
                 return true;
             }
+        }
+
+        // Verifica anche campi testo
+        if (!empty($this->vitamine_minerali) && $this->vitamine_minerali !== '[]') {
+            return true;
+        }
+        if (!empty($this->ingredienti)) {
+            return true;
+        }
+        if (!empty($this->allergeni)) {
+            return true;
         }
 
         return false;
