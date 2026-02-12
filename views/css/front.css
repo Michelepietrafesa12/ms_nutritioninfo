@@ -1,0 +1,188 @@
+/**
+ * Stili front-end per la tabella nutrizionale stile etichetta EU.
+ * Modulo ms_nutritioninfo.
+ */
+
+/* Wrapper */
+.ms-nutrition-table-wrapper {
+    max-width: 500px;
+    margin: 20px auto;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Tabella principale */
+.ms-nutrition-table {
+    width: 100%;
+    border: 3px solid #000;
+    border-collapse: collapse;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #222;
+    background: #fff;
+}
+
+/* Header */
+.ms-nutrition-header {
+    background: #333;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 12px 10px;
+    text-align: left;
+    border-bottom: 2px solid #000;
+}
+
+/* Porzione */
+.ms-nutrition-porzione {
+    background: #f5f5f5;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    border-bottom: 3px solid #000;
+    color: #444;
+}
+
+/* Righe */
+.ms-nutrition-row td {
+    padding: 6px 10px;
+    border-bottom: 1px solid #ccc;
+    vertical-align: middle;
+}
+
+/* Separatori principali tra macro-nutrienti */
+.ms-nutrition-separator td {
+    border-top: 2px solid #000;
+}
+
+/* Label */
+.ms-nutrition-label {
+    font-weight: 600;
+    text-align: left;
+    width: 60%;
+}
+
+/* Valore */
+.ms-nutrition-value {
+    text-align: right;
+    width: 40%;
+    white-space: nowrap;
+}
+
+/* Sottocampi indentati */
+.ms-nutrition-indent {
+    padding-left: 25px !important;
+    font-weight: 400;
+    font-size: 13px;
+}
+
+/* Sottorighe */
+.ms-nutrition-sub-row td {
+    border-top: none;
+}
+
+/* Titolo sezione (vitamine, etc) */
+.ms-nutrition-section-title {
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    background: #f0f0f0;
+}
+
+/* Righe vitamine */
+.ms-nutrition-vitamin-row td {
+    padding: 4px 10px;
+    font-size: 13px;
+    border-top: none;
+}
+
+/* VNR */
+.ms-nutrition-vnr {
+    display: inline-block;
+    min-width: 45px;
+    text-align: right;
+    color: #666;
+    margin-left: 10px;
+}
+
+/* Sezione testo (ingredienti, allergeni) */
+.ms-nutrition-text-section {
+    padding: 10px !important;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.ms-nutrition-text-section strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Note */
+.ms-nutrition-note {
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
+    border-top: 1px solid #ccc;
+}
+
+/* Righe alternate */
+.ms-nutrition-table tbody tr:nth-child(even) {
+    background: #fafafa;
+}
+
+.ms-nutrition-table tbody tr:nth-child(odd) {
+    background: #fff;
+}
+
+/* Ultima riga */
+.ms-nutrition-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* =========================================================================
+ * Responsive
+ * ========================================================================= */
+
+@media (max-width: 767px) {
+    .ms-nutrition-table-wrapper {
+        max-width: 100%;
+        margin: 10px 0;
+    }
+
+    .ms-nutrition-table {
+        font-size: 13px;
+    }
+
+    .ms-nutrition-header {
+        font-size: 14px;
+        padding: 10px 8px;
+    }
+
+    .ms-nutrition-row td {
+        padding: 5px 8px;
+    }
+
+    .ms-nutrition-indent {
+        padding-left: 18px !important;
+        font-size: 12px;
+    }
+
+    .ms-nutrition-label {
+        width: 55%;
+    }
+
+    .ms-nutrition-value {
+        width: 45%;
+    }
+
+    .ms-nutrition-vnr {
+        display: block;
+        margin-left: 0;
+        font-size: 11px;
+    }
+}
