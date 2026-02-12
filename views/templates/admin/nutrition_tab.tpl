@@ -31,7 +31,7 @@
 
             <div class="form-group">
                 <label class="control-label col-lg-3" for="nutrition_porzione">
-                    {l s='Porzione di riferimento' mod='ms_nutritioninfo'}
+                    {l s='Porzione di riferimento (dose)' mod='ms_nutritioninfo'}
                 </label>
                 <div class="col-lg-4">
                     <input type="text" name="nutrition_porzione" id="nutrition_porzione"
@@ -40,11 +40,50 @@
                         placeholder="{l s='es: 100g, 1 porzione (30g)' mod='ms_nutritioninfo'}" />
                 </div>
             </div>
+
+            <div class="form-group">
+                <label class="control-label col-lg-3">
+                    {l s='Mostra colonna per porzione' mod='ms_nutritioninfo'}
+                </label>
+                <div class="col-lg-9">
+                    <span class="switch prestashop-switch fixed-width-lg">
+                        <input type="radio" name="nutrition_porzione_attiva" id="nutrition_porzione_attiva_on" value="1"
+                            {if $nutrition && $nutrition->porzione_attiva}checked="checked"{/if} />
+                        <label for="nutrition_porzione_attiva_on">{l s='Sì' mod='ms_nutritioninfo'}</label>
+                        <input type="radio" name="nutrition_porzione_attiva" id="nutrition_porzione_attiva_off" value="0"
+                            {if !$nutrition || !$nutrition->porzione_attiva}checked="checked"{/if} />
+                        <label for="nutrition_porzione_attiva_off">{l s='No' mod='ms_nutritioninfo'}</label>
+                        <a class="slide-button btn"></a>
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group" id="ms-porzione-descrizione-wrap" {if !$nutrition || !$nutrition->porzione_attiva}style="display:none"{/if}>
+                <label class="control-label col-lg-3" for="nutrition_porzione_descrizione">
+                    {l s='Descrizione porzione' mod='ms_nutritioninfo'}
+                </label>
+                <div class="col-lg-4">
+                    <input type="text" name="nutrition_porzione_descrizione" id="nutrition_porzione_descrizione"
+                        class="form-control"
+                        value="{if $nutrition && $nutrition->porzione_descrizione}{$nutrition->porzione_descrizione|escape:'htmlall':'UTF-8'}{/if}"
+                        placeholder="{l s='es: 27,5 g' mod='ms_nutritioninfo'}" />
+                    <p class="help-block">{l s='Testo visualizzato nell\'intestazione della colonna per porzione.' mod='ms_nutritioninfo'}</p>
+                </div>
+            </div>
         </div>
 
         {* === Sezione 2: Valori nutrizionali principali === *}
         <div class="ms-nutrition-section">
             <h4>{l s='Valori nutrizionali principali' mod='ms_nutritioninfo'}</h4>
+
+            {* Header colonne *}
+            <div class="form-group ms-nutrition-columns-header">
+                <label class="control-label col-lg-3"></label>
+                <div class="col-lg-3 text-center"><strong>{l s='Per 100 g' mod='ms_nutritioninfo'}</strong></div>
+                <div class="col-lg-3 text-center ms-porzione-col" {if !$nutrition || !$nutrition->porzione_attiva}style="display:none"{/if}>
+                    <strong>{l s='Per porzione' mod='ms_nutritioninfo'}</strong>
+                </div>
+            </div>
 
             {* Energia kcal / kJ *}
             <div class="form-group">
@@ -53,7 +92,7 @@
                 </label>
                 <div class="col-lg-9">
                     <div class="row">
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="input-group">
                                 <input type="number" step="0.01" min="0" name="nutrition_energia_kcal"
                                     id="nutrition_energia_kcal" class="form-control"
@@ -62,7 +101,7 @@
                                 <span class="input-group-addon">kcal</span>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="input-group">
                                 <input type="number" step="0.01" min="0" name="nutrition_energia_kj"
                                     id="nutrition_energia_kj" class="form-control"
@@ -71,172 +110,67 @@
                                 <span class="input-group-addon">kJ</span>
                             </div>
                         </div>
+                        <div class="col-sm-3 ms-porzione-col" {if !$nutrition || !$nutrition->porzione_attiva}style="display:none"{/if}>
+                            <div class="input-group">
+                                <input type="number" step="0.01" min="0" name="nutrition_energia_kcal_porzione"
+                                    class="form-control"
+                                    value="{if $nutrition && $nutrition->energia_kcal_porzione !== null}{$nutrition->energia_kcal_porzione|escape:'htmlall':'UTF-8'}{/if}"
+                                    placeholder="kcal" />
+                                <span class="input-group-addon">kcal</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 ms-porzione-col" {if !$nutrition || !$nutrition->porzione_attiva}style="display:none"{/if}>
+                            <div class="input-group">
+                                <input type="number" step="0.01" min="0" name="nutrition_energia_kj_porzione"
+                                    class="form-control"
+                                    value="{if $nutrition && $nutrition->energia_kj_porzione !== null}{$nutrition->energia_kj_porzione|escape:'htmlall':'UTF-8'}{/if}"
+                                    placeholder="kJ" />
+                                <span class="input-group-addon">kJ</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {* Grassi *}
-            <div class="form-group">
-                <label class="control-label col-lg-3">
-                    {l s='Grassi' mod='ms_nutritioninfo'}
-                </label>
-                <div class="col-lg-3">
-                    <div class="input-group">
-                        <input type="number" step="0.01" min="0" name="nutrition_grassi"
-                            class="form-control"
-                            value="{if $nutrition && $nutrition->grassi !== null}{$nutrition->grassi|escape:'htmlall':'UTF-8'}{/if}" />
-                        <span class="input-group-addon">g</span>
-                    </div>
-                </div>
-            </div>
+            {* Macro helper: campo numerico con colonna porzione *}
+            {assign var='macro_fields' value=[
+                ['name' => 'grassi', 'label' => {l s='Grassi' mod='ms_nutritioninfo'}, 'sub' => false, 'optional' => false],
+                ['name' => 'grassi_saturi', 'label' => {l s='di cui acidi grassi saturi' mod='ms_nutritioninfo'}, 'sub' => true, 'optional' => false],
+                ['name' => 'grassi_monoinsaturi', 'label' => {l s='di cui acidi grassi monoinsaturi' mod='ms_nutritioninfo'}, 'sub' => true, 'optional' => true],
+                ['name' => 'grassi_polinsaturi', 'label' => {l s='di cui acidi grassi polinsaturi' mod='ms_nutritioninfo'}, 'sub' => true, 'optional' => true],
+                ['name' => 'carboidrati', 'label' => {l s='Carboidrati' mod='ms_nutritioninfo'}, 'sub' => false, 'optional' => false],
+                ['name' => 'zuccheri', 'label' => {l s='di cui zuccheri' mod='ms_nutritioninfo'}, 'sub' => true, 'optional' => false],
+                ['name' => 'polialcoli', 'label' => {l s='di cui polialcoli' mod='ms_nutritioninfo'}, 'sub' => true, 'optional' => true],
+                ['name' => 'amido', 'label' => {l s='di cui amido' mod='ms_nutritioninfo'}, 'sub' => true, 'optional' => true],
+                ['name' => 'fibre', 'label' => {l s='Fibre' mod='ms_nutritioninfo'}, 'sub' => false, 'optional' => false],
+                ['name' => 'proteine', 'label' => {l s='Proteine' mod='ms_nutritioninfo'}, 'sub' => false, 'optional' => false],
+                ['name' => 'sale', 'label' => {l s='Sale' mod='ms_nutritioninfo'}, 'sub' => false, 'optional' => false]
+            ]}
 
-            <div class="form-group ms-nutrition-sub">
-                <label class="control-label col-lg-3">
-                    {l s='di cui acidi grassi saturi' mod='ms_nutritioninfo'}
-                </label>
-                <div class="col-lg-3">
-                    <div class="input-group">
-                        <input type="number" step="0.01" min="0" name="nutrition_grassi_saturi"
-                            class="form-control"
-                            value="{if $nutrition && $nutrition->grassi_saturi !== null}{$nutrition->grassi_saturi|escape:'htmlall':'UTF-8'}{/if}" />
-                        <span class="input-group-addon">g</span>
+            {foreach $macro_fields as $mf}
+                <div class="form-group {if $mf.sub}ms-nutrition-sub{/if} {if $mf.optional}ms-nutrition-optional{/if}">
+                    <label class="control-label col-lg-3">
+                        {$mf.label}
+                        {if $mf.optional}<span class="ms-optional-badge">{l s='opzionale' mod='ms_nutritioninfo'}</span>{/if}
+                    </label>
+                    <div class="col-lg-3">
+                        <div class="input-group">
+                            <input type="number" step="0.01" min="0" name="nutrition_{$mf.name}"
+                                class="form-control"
+                                value="{if $nutrition && $nutrition->{$mf.name} !== null}{$nutrition->{$mf.name}|escape:'htmlall':'UTF-8'}{/if}" />
+                            <span class="input-group-addon">g</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 ms-porzione-col" {if !$nutrition || !$nutrition->porzione_attiva}style="display:none"{/if}>
+                        <div class="input-group">
+                            <input type="number" step="0.01" min="0" name="nutrition_{$mf.name}_porzione"
+                                class="form-control"
+                                value="{if $nutrition && $nutrition->{$mf.name|cat:'_porzione'} !== null}{$nutrition->{$mf.name|cat:'_porzione'}|escape:'htmlall':'UTF-8'}{/if}" />
+                            <span class="input-group-addon">g</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="form-group ms-nutrition-sub ms-nutrition-optional">
-                <label class="control-label col-lg-3">
-                    {l s='di cui acidi grassi monoinsaturi' mod='ms_nutritioninfo'}
-                    <span class="ms-optional-badge">{l s='opzionale' mod='ms_nutritioninfo'}</span>
-                </label>
-                <div class="col-lg-3">
-                    <div class="input-group">
-                        <input type="number" step="0.01" min="0" name="nutrition_grassi_monoinsaturi"
-                            class="form-control"
-                            value="{if $nutrition && $nutrition->grassi_monoinsaturi !== null}{$nutrition->grassi_monoinsaturi|escape:'htmlall':'UTF-8'}{/if}" />
-                        <span class="input-group-addon">g</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group ms-nutrition-sub ms-nutrition-optional">
-                <label class="control-label col-lg-3">
-                    {l s='di cui acidi grassi polinsaturi' mod='ms_nutritioninfo'}
-                    <span class="ms-optional-badge">{l s='opzionale' mod='ms_nutritioninfo'}</span>
-                </label>
-                <div class="col-lg-3">
-                    <div class="input-group">
-                        <input type="number" step="0.01" min="0" name="nutrition_grassi_polinsaturi"
-                            class="form-control"
-                            value="{if $nutrition && $nutrition->grassi_polinsaturi !== null}{$nutrition->grassi_polinsaturi|escape:'htmlall':'UTF-8'}{/if}" />
-                        <span class="input-group-addon">g</span>
-                    </div>
-                </div>
-            </div>
-
-            {* Carboidrati *}
-            <div class="form-group">
-                <label class="control-label col-lg-3">
-                    {l s='Carboidrati' mod='ms_nutritioninfo'}
-                </label>
-                <div class="col-lg-3">
-                    <div class="input-group">
-                        <input type="number" step="0.01" min="0" name="nutrition_carboidrati"
-                            class="form-control"
-                            value="{if $nutrition && $nutrition->carboidrati !== null}{$nutrition->carboidrati|escape:'htmlall':'UTF-8'}{/if}" />
-                        <span class="input-group-addon">g</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group ms-nutrition-sub">
-                <label class="control-label col-lg-3">
-                    {l s='di cui zuccheri' mod='ms_nutritioninfo'}
-                </label>
-                <div class="col-lg-3">
-                    <div class="input-group">
-                        <input type="number" step="0.01" min="0" name="nutrition_zuccheri"
-                            class="form-control"
-                            value="{if $nutrition && $nutrition->zuccheri !== null}{$nutrition->zuccheri|escape:'htmlall':'UTF-8'}{/if}" />
-                        <span class="input-group-addon">g</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group ms-nutrition-sub ms-nutrition-optional">
-                <label class="control-label col-lg-3">
-                    {l s='di cui polialcoli' mod='ms_nutritioninfo'}
-                    <span class="ms-optional-badge">{l s='opzionale' mod='ms_nutritioninfo'}</span>
-                </label>
-                <div class="col-lg-3">
-                    <div class="input-group">
-                        <input type="number" step="0.01" min="0" name="nutrition_polialcoli"
-                            class="form-control"
-                            value="{if $nutrition && $nutrition->polialcoli !== null}{$nutrition->polialcoli|escape:'htmlall':'UTF-8'}{/if}" />
-                        <span class="input-group-addon">g</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group ms-nutrition-sub ms-nutrition-optional">
-                <label class="control-label col-lg-3">
-                    {l s='di cui amido' mod='ms_nutritioninfo'}
-                    <span class="ms-optional-badge">{l s='opzionale' mod='ms_nutritioninfo'}</span>
-                </label>
-                <div class="col-lg-3">
-                    <div class="input-group">
-                        <input type="number" step="0.01" min="0" name="nutrition_amido"
-                            class="form-control"
-                            value="{if $nutrition && $nutrition->amido !== null}{$nutrition->amido|escape:'htmlall':'UTF-8'}{/if}" />
-                        <span class="input-group-addon">g</span>
-                    </div>
-                </div>
-            </div>
-
-            {* Fibre *}
-            <div class="form-group">
-                <label class="control-label col-lg-3">
-                    {l s='Fibre' mod='ms_nutritioninfo'}
-                </label>
-                <div class="col-lg-3">
-                    <div class="input-group">
-                        <input type="number" step="0.01" min="0" name="nutrition_fibre"
-                            class="form-control"
-                            value="{if $nutrition && $nutrition->fibre !== null}{$nutrition->fibre|escape:'htmlall':'UTF-8'}{/if}" />
-                        <span class="input-group-addon">g</span>
-                    </div>
-                </div>
-            </div>
-
-            {* Proteine *}
-            <div class="form-group">
-                <label class="control-label col-lg-3">
-                    {l s='Proteine' mod='ms_nutritioninfo'}
-                </label>
-                <div class="col-lg-3">
-                    <div class="input-group">
-                        <input type="number" step="0.01" min="0" name="nutrition_proteine"
-                            class="form-control"
-                            value="{if $nutrition && $nutrition->proteine !== null}{$nutrition->proteine|escape:'htmlall':'UTF-8'}{/if}" />
-                        <span class="input-group-addon">g</span>
-                    </div>
-                </div>
-            </div>
-
-            {* Sale *}
-            <div class="form-group">
-                <label class="control-label col-lg-3">
-                    {l s='Sale' mod='ms_nutritioninfo'}
-                </label>
-                <div class="col-lg-3">
-                    <div class="input-group">
-                        <input type="number" step="0.01" min="0" name="nutrition_sale"
-                            class="form-control"
-                            value="{if $nutrition && $nutrition->sale !== null}{$nutrition->sale|escape:'htmlall':'UTF-8'}{/if}" />
-                        <span class="input-group-addon">g</span>
-                    </div>
-                </div>
-            </div>
+            {/foreach}
         </div>
 
         {* === Sezione 3: Vitamine e Minerali === *}
@@ -293,6 +227,54 @@
                         data-placeholder-vnr="{l s='%VNR' mod='ms_nutritioninfo'}"
                         data-title-rimuovi="{l s='Rimuovi' mod='ms_nutritioninfo'}">
                         <i class="icon-plus"></i> {l s='Aggiungi vitamina/minerale' mod='ms_nutritioninfo'}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        {* === Sezione 3b: Acidi Aminici === *}
+        <div class="ms-nutrition-section">
+            <h4>{l s='Acidi Aminici' mod='ms_nutritioninfo'}</h4>
+
+            <div id="ms-aminoacidi-container">
+                {if $acidi_aminici && count($acidi_aminici) > 0}
+                    {foreach $acidi_aminici as $index => $aa}
+                        <div class="ms-aminoacido-row form-group">
+                            <div class="col-lg-4">
+                                <input type="text" name="nutrition_aa_nome[]"
+                                    class="form-control"
+                                    value="{$aa.nome|escape:'htmlall':'UTF-8'}"
+                                    placeholder="{l s='Nome (es: L-Leucina)' mod='ms_nutritioninfo'}" />
+                            </div>
+                            <div class="col-lg-3">
+                                <input type="number" step="0.01" min="0" name="nutrition_aa_quantita[]"
+                                    class="form-control"
+                                    value="{$aa.quantita|escape:'htmlall':'UTF-8'}"
+                                    placeholder="{l s='Quantità' mod='ms_nutritioninfo'}" />
+                            </div>
+                            <div class="col-lg-2">
+                                <select name="nutrition_aa_unita[]" class="form-control">
+                                    <option value="g" {if $aa.unita == 'g'}selected{/if}>g</option>
+                                    <option value="mg" {if $aa.unita == 'mg'}selected{/if}>mg</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-1">
+                                <button type="button" class="btn btn-danger ms-remove-aminoacido" title="{l s='Rimuovi' mod='ms_nutritioninfo'}">
+                                    <i class="icon-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    {/foreach}
+                {/if}
+            </div>
+
+            <div class="form-group">
+                <div class="col-lg-offset-0 col-lg-12">
+                    <button type="button" id="ms-add-aminoacido" class="btn btn-default"
+                        data-placeholder-nome="{l s='Nome (es: L-Leucina)' mod='ms_nutritioninfo'}"
+                        data-placeholder-quantita="{l s='Quantità' mod='ms_nutritioninfo'}"
+                        data-title-rimuovi="{l s='Rimuovi' mod='ms_nutritioninfo'}">
+                        <i class="icon-plus"></i> {l s='Aggiungi acido aminico' mod='ms_nutritioninfo'}
                     </button>
                 </div>
             </div>

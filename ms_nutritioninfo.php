@@ -143,9 +143,18 @@ class Ms_NutritionInfo extends Module
             }
         }
 
+        $acidi_aminici = array();
+        if ($nutrition && !empty($nutrition->acidi_aminici)) {
+            $decoded = json_decode($nutrition->acidi_aminici, true);
+            if (is_array($decoded)) {
+                $acidi_aminici = $decoded;
+            }
+        }
+
         $this->context->smarty->assign(array(
             'nutrition' => $nutrition,
             'vitamine_minerali' => $vitamine_minerali,
+            'acidi_aminici' => $acidi_aminici,
             'id_product' => $id_product,
             'module_dir' => $this->_path,
         ));
@@ -177,8 +186,10 @@ class Ms_NutritionInfo extends Module
 
         $nutrition->active = (int) Tools::getValue('nutrition_active', 0);
         $nutrition->porzione = Tools::getValue('nutrition_porzione', '100g');
+        $nutrition->porzione_attiva = (int) Tools::getValue('nutrition_porzione_attiva', 0);
+        $nutrition->porzione_descrizione = Tools::getValue('nutrition_porzione_descrizione', '');
 
-        // Campi numerici
+        // Campi numerici (per 100g)
         $numericFields = array(
             'energia_kcal', 'energia_kj', 'grassi', 'grassi_saturi',
             'grassi_monoinsaturi', 'grassi_polinsaturi', 'carboidrati',
@@ -186,6 +197,7 @@ class Ms_NutritionInfo extends Module
         );
 
         foreach ($numericFields as $field) {
+            // Valore per 100g
             $value = Tools::getValue('nutrition_' . $field, '');
             if ($value !== '' && $value !== null) {
                 $value = str_replace(',', '.', $value);
@@ -193,6 +205,16 @@ class Ms_NutritionInfo extends Module
                 $nutrition->{$field} = $floatVal >= 0 ? $floatVal : null;
             } else {
                 $nutrition->{$field} = null;
+            }
+
+            // Valore per porzione
+            $valuePorz = Tools::getValue('nutrition_' . $field . '_porzione', '');
+            if ($valuePorz !== '' && $valuePorz !== null) {
+                $valuePorz = str_replace(',', '.', $valuePorz);
+                $floatValPorz = (float) $valuePorz;
+                $nutrition->{$field . '_porzione'} = $floatValPorz >= 0 ? $floatValPorz : null;
+            } else {
+                $nutrition->{$field . '_porzione'} = null;
             }
         }
 
@@ -219,6 +241,28 @@ class Ms_NutritionInfo extends Module
             }
         }
         $nutrition->vitamine_minerali = !empty($vitamine) ? json_encode($vitamine) : null;
+
+        // Acidi aminici (JSON)
+        $aaNomi = Tools::getValue('nutrition_aa_nome', array());
+        $aaQuantita = Tools::getValue('nutrition_aa_quantita', array());
+        $aaUnita = Tools::getValue('nutrition_aa_unita', array());
+
+        $aminoacidi = array();
+        if (is_array($aaNomi)) {
+            foreach ($aaNomi as $i => $nome) {
+                $nome = trim($nome);
+                if (!empty($nome)) {
+                    $allowedUnits = array('mg', 'g');
+                    $unita = isset($aaUnita[$i]) && in_array($aaUnita[$i], $allowedUnits) ? $aaUnita[$i] : 'g';
+                    $aminoacidi[] = array(
+                        'nome' => $nome,
+                        'quantita' => isset($aaQuantita[$i]) ? (string) (float) str_replace(',', '.', $aaQuantita[$i]) : '',
+                        'unita' => $unita,
+                    );
+                }
+            }
+        }
+        $nutrition->acidi_aminici = !empty($aminoacidi) ? json_encode($aminoacidi) : null;
 
         // Campi testo
         $nutrition->ingredienti = Tools::getValue('nutrition_ingredienti', '');
@@ -274,17 +318,35 @@ class Ms_NutritionInfo extends Module
             }
         }
 
+        // Decodifica acidi aminici
+        $acidi_aminici = array();
+        if (!empty($nutrition->acidi_aminici)) {
+            $decoded = json_decode($nutrition->acidi_aminici, true);
+            if (is_array($decoded) && !empty($decoded)) {
+                $acidi_aminici = $decoded;
+            }
+        }
+
         // Sanitizza HTML di ingredienti e allergeni: consenti solo tag di formattazione base
         $allowedTags = '<b><strong><i><em><br><p><ul><ol><li><span>';
         $safeIngredienti = !empty($nutrition->ingredienti) ? strip_tags($nutrition->ingredienti, $allowedTags) : '';
         $safeAllergeni = !empty($nutrition->allergeni) ? strip_tags($nutrition->allergeni, $allowedTags) : '';
 
+        // Determina se mostrare la colonna per porzione
+        $showPorzione = (bool) $nutrition->porzione_attiva;
+
+        // Numero di colonne della tabella
+        $colspan = $showPorzione ? 3 : 2;
+
         $this->context->smarty->assign(array(
             'nutrition' => $nutrition,
             'vitamine_minerali' => $vitamine_minerali,
+            'acidi_aminici' => $acidi_aminici,
             'has_vnr' => $hasVnr,
             'safe_ingredienti' => $safeIngredienti,
             'safe_allergeni' => $safeAllergeni,
+            'show_porzione' => $showPorzione,
+            'colspan' => $colspan,
         ));
 
         $content = $this->display(__FILE__, 'views/templates/hook/nutrition_front.tpl');

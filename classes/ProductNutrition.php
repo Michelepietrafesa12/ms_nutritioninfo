@@ -23,47 +23,71 @@ class ProductNutrition extends ObjectModel
     /** @var string */
     public $porzione = '100g';
 
+    /** @var bool */
+    public $porzione_attiva = 0;
+
+    /** @var string */
+    public $porzione_descrizione;
+
     /** @var float */
     public $energia_kcal;
-
     /** @var float */
     public $energia_kj;
-
     /** @var float */
     public $grassi;
-
     /** @var float */
     public $grassi_saturi;
-
     /** @var float */
     public $grassi_monoinsaturi;
-
     /** @var float */
     public $grassi_polinsaturi;
-
     /** @var float */
     public $carboidrati;
-
     /** @var float */
     public $zuccheri;
-
     /** @var float */
     public $polialcoli;
-
     /** @var float */
     public $amido;
-
     /** @var float */
     public $fibre;
-
     /** @var float */
     public $proteine;
-
     /** @var float */
     public $sale;
 
+    /** @var float */
+    public $energia_kcal_porzione;
+    /** @var float */
+    public $energia_kj_porzione;
+    /** @var float */
+    public $grassi_porzione;
+    /** @var float */
+    public $grassi_saturi_porzione;
+    /** @var float */
+    public $grassi_monoinsaturi_porzione;
+    /** @var float */
+    public $grassi_polinsaturi_porzione;
+    /** @var float */
+    public $carboidrati_porzione;
+    /** @var float */
+    public $zuccheri_porzione;
+    /** @var float */
+    public $polialcoli_porzione;
+    /** @var float */
+    public $amido_porzione;
+    /** @var float */
+    public $fibre_porzione;
+    /** @var float */
+    public $proteine_porzione;
+    /** @var float */
+    public $sale_porzione;
+
     /** @var string JSON */
     public $vitamine_minerali;
+
+    /** @var string JSON */
+    public $acidi_aminici;
 
     /** @var string HTML */
     public $ingredienti;
@@ -96,6 +120,15 @@ class ProductNutrition extends ObjectModel
                 'required' => true,
             ),
             'porzione' => array(
+                'type' => self::TYPE_STRING,
+                'validate' => 'isGenericName',
+                'size' => 100,
+            ),
+            'porzione_attiva' => array(
+                'type' => self::TYPE_BOOL,
+                'validate' => 'isBool',
+            ),
+            'porzione_descrizione' => array(
                 'type' => self::TYPE_STRING,
                 'validate' => 'isGenericName',
                 'size' => 100,
@@ -152,7 +185,63 @@ class ProductNutrition extends ObjectModel
                 'type' => self::TYPE_FLOAT,
                 'validate' => 'isUnsignedFloat',
             ),
+            'energia_kcal_porzione' => array(
+                'type' => self::TYPE_FLOAT,
+                'validate' => 'isUnsignedFloat',
+            ),
+            'energia_kj_porzione' => array(
+                'type' => self::TYPE_FLOAT,
+                'validate' => 'isUnsignedFloat',
+            ),
+            'grassi_porzione' => array(
+                'type' => self::TYPE_FLOAT,
+                'validate' => 'isUnsignedFloat',
+            ),
+            'grassi_saturi_porzione' => array(
+                'type' => self::TYPE_FLOAT,
+                'validate' => 'isUnsignedFloat',
+            ),
+            'grassi_monoinsaturi_porzione' => array(
+                'type' => self::TYPE_FLOAT,
+                'validate' => 'isUnsignedFloat',
+            ),
+            'grassi_polinsaturi_porzione' => array(
+                'type' => self::TYPE_FLOAT,
+                'validate' => 'isUnsignedFloat',
+            ),
+            'carboidrati_porzione' => array(
+                'type' => self::TYPE_FLOAT,
+                'validate' => 'isUnsignedFloat',
+            ),
+            'zuccheri_porzione' => array(
+                'type' => self::TYPE_FLOAT,
+                'validate' => 'isUnsignedFloat',
+            ),
+            'polialcoli_porzione' => array(
+                'type' => self::TYPE_FLOAT,
+                'validate' => 'isUnsignedFloat',
+            ),
+            'amido_porzione' => array(
+                'type' => self::TYPE_FLOAT,
+                'validate' => 'isUnsignedFloat',
+            ),
+            'fibre_porzione' => array(
+                'type' => self::TYPE_FLOAT,
+                'validate' => 'isUnsignedFloat',
+            ),
+            'proteine_porzione' => array(
+                'type' => self::TYPE_FLOAT,
+                'validate' => 'isUnsignedFloat',
+            ),
+            'sale_porzione' => array(
+                'type' => self::TYPE_FLOAT,
+                'validate' => 'isUnsignedFloat',
+            ),
             'vitamine_minerali' => array(
+                'type' => self::TYPE_STRING,
+                'validate' => 'isString',
+            ),
+            'acidi_aminici' => array(
                 'type' => self::TYPE_STRING,
                 'validate' => 'isString',
             ),
@@ -234,6 +323,11 @@ class ProductNutrition extends ObjectModel
             'energia_kcal', 'energia_kj', 'grassi', 'grassi_saturi',
             'grassi_monoinsaturi', 'grassi_polinsaturi', 'carboidrati',
             'zuccheri', 'polialcoli', 'amido', 'fibre', 'proteine', 'sale',
+            'energia_kcal_porzione', 'energia_kj_porzione', 'grassi_porzione',
+            'grassi_saturi_porzione', 'grassi_monoinsaturi_porzione',
+            'grassi_polinsaturi_porzione', 'carboidrati_porzione',
+            'zuccheri_porzione', 'polialcoli_porzione', 'amido_porzione',
+            'fibre_porzione', 'proteine_porzione', 'sale_porzione',
         );
 
         foreach ($numericFields as $field) {
@@ -242,8 +336,10 @@ class ProductNutrition extends ObjectModel
             }
         }
 
-        // Verifica anche campi testo
         if (!empty($this->vitamine_minerali) && $this->vitamine_minerali !== '[]') {
+            return true;
+        }
+        if (!empty($this->acidi_aminici) && $this->acidi_aminici !== '[]') {
             return true;
         }
         if (!empty($this->ingredienti)) {

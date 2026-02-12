@@ -62,8 +62,16 @@
     border-radius: 3px;
 }
 
-/* Righe vitamine/minerali */
-.ms-vitamina-row {
+/* Header colonne (Per 100g / Per porzione) */
+.ms-nutrition-columns-header {
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Righe vitamine/minerali e acidi aminici */
+.ms-vitamina-row,
+.ms-aminoacido-row {
     display: flex;
     align-items: center;
     padding: 5px 0;
@@ -75,20 +83,24 @@
     margin-right: 0;
 }
 
-.ms-vitamina-row .form-control {
+.ms-vitamina-row .form-control,
+.ms-aminoacido-row .form-control {
     margin-bottom: 0;
 }
 
-.ms-vitamina-row .btn-danger {
+.ms-vitamina-row .btn-danger,
+.ms-aminoacido-row .btn-danger {
     padding: 6px 10px;
 }
 
-/* Pulsante aggiungi vitamina */
-#ms-add-vitamina {
+/* Pulsanti aggiungi */
+#ms-add-vitamina,
+#ms-add-aminoacido {
     margin-top: 10px;
 }
 
-#ms-add-vitamina i {
+#ms-add-vitamina i,
+#ms-add-aminoacido i {
     margin-right: 5px;
 }
 

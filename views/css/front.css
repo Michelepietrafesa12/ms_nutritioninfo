@@ -1,5 +1,6 @@
 /**
  * Stili front-end per la tabella nutrizionale stile etichetta EU.
+ * Supporta layout a 2 colonne (per 100g) e 3 colonne (per 100g + per porzione).
  * Modulo ms_nutritioninfo.
  */
 
@@ -8,6 +9,10 @@
     max-width: 500px;
     margin: 20px auto;
     font-family: Arial, Helvetica, sans-serif;
+}
+
+.ms-nutrition-table-wrapper.ms-nutrition-3col {
+    max-width: 600px;
 }
 
 /* Tabella principale */
@@ -34,14 +39,23 @@
     border-bottom: 2px solid #000;
 }
 
+/* Header colonne */
+.ms-nutrition-col-headers td {
+    border-bottom: 3px solid #000;
+}
+
 /* Porzione */
 .ms-nutrition-porzione {
     background: #f5f5f5;
     padding: 8px 10px;
     font-size: 13px;
     font-weight: 600;
-    border-bottom: 3px solid #000;
     color: #444;
+}
+
+.ms-nutrition-col-label {
+    text-align: right;
+    white-space: nowrap;
 }
 
 /* Righe */
@@ -60,13 +74,29 @@
 .ms-nutrition-label {
     font-weight: 600;
     text-align: left;
+}
+
+/* Larghezze colonne: layout 2 colonne */
+.ms-nutrition-table-wrapper:not(.ms-nutrition-3col) .ms-nutrition-label {
     width: 60%;
+}
+
+.ms-nutrition-table-wrapper:not(.ms-nutrition-3col) .ms-nutrition-value {
+    width: 40%;
+}
+
+/* Larghezze colonne: layout 3 colonne */
+.ms-nutrition-3col .ms-nutrition-label {
+    width: 45%;
+}
+
+.ms-nutrition-3col .ms-nutrition-value {
+    width: 27.5%;
 }
 
 /* Valore */
 .ms-nutrition-value {
     text-align: right;
-    width: 40%;
     white-space: nowrap;
 }
 
@@ -82,7 +112,7 @@
     border-top: none;
 }
 
-/* Titolo sezione (vitamine, etc) */
+/* Titolo sezione (vitamine, acidi aminici, etc) */
 .ms-nutrition-section-title {
     font-weight: 700 !important;
     text-transform: uppercase;
@@ -92,7 +122,8 @@
 }
 
 /* Righe vitamine */
-.ms-nutrition-vitamin-row td {
+.ms-nutrition-vitamin-row td,
+.ms-nutrition-amino-row td {
     padding: 4px 10px;
     font-size: 13px;
     border-top: none;
@@ -149,7 +180,8 @@
  * ========================================================================= */
 
 @media (max-width: 767px) {
-    .ms-nutrition-table-wrapper {
+    .ms-nutrition-table-wrapper,
+    .ms-nutrition-table-wrapper.ms-nutrition-3col {
         max-width: 100%;
         margin: 10px 0;
     }
@@ -172,17 +204,29 @@
         font-size: 12px;
     }
 
-    .ms-nutrition-label {
+    .ms-nutrition-table-wrapper:not(.ms-nutrition-3col) .ms-nutrition-label {
         width: 55%;
     }
 
-    .ms-nutrition-value {
+    .ms-nutrition-table-wrapper:not(.ms-nutrition-3col) .ms-nutrition-value {
         width: 45%;
+    }
+
+    .ms-nutrition-3col .ms-nutrition-label {
+        width: 40%;
+    }
+
+    .ms-nutrition-3col .ms-nutrition-value {
+        width: 30%;
     }
 
     .ms-nutrition-vnr {
         display: block;
         margin-left: 0;
         font-size: 11px;
+    }
+
+    .ms-nutrition-col-label {
+        font-size: 12px;
     }
 }
