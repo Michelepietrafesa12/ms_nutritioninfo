@@ -4,15 +4,23 @@
  * Modulo ms_nutritioninfo.
  */
 
-/* Wrapper */
+/* Wrapper — compatibile con Creative Elements e container flessibili */
 .ms-nutrition-table-wrapper {
+    width: 100%;
     max-width: 500px;
     margin: 20px auto;
     font-family: Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
 }
 
 .ms-nutrition-table-wrapper.ms-nutrition-3col {
     max-width: 600px;
+}
+
+/* Quando inserito in un container CE stretto, adatta al 100% */
+.elementor-widget-container .ms-nutrition-table-wrapper,
+.ce-widget-container .ms-nutrition-table-wrapper {
+    max-width: 100%;
 }
 
 /* Tabella principale */

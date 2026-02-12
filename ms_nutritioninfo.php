@@ -227,7 +227,7 @@ class Ms_NutritionInfo extends Module
         $vitamine = array();
         if (is_array($vitNomi)) {
             foreach ($vitNomi as $i => $nome) {
-                $nome = trim($nome);
+                $nome = strip_tags(trim($nome));
                 if (!empty($nome)) {
                     $allowedUnits = array('mg', 'µg', 'g');
                     $unita = isset($vitUnita[$i]) && in_array($vitUnita[$i], $allowedUnits) ? $vitUnita[$i] : 'mg';
@@ -240,7 +240,7 @@ class Ms_NutritionInfo extends Module
                 }
             }
         }
-        $nutrition->vitamine_minerali = !empty($vitamine) ? json_encode($vitamine) : null;
+        $nutrition->vitamine_minerali = !empty($vitamine) ? json_encode($vitamine, JSON_UNESCAPED_UNICODE) : null;
 
         // Acidi aminici (JSON)
         $aaNomi = Tools::getValue('nutrition_aa_nome', array());
@@ -250,7 +250,7 @@ class Ms_NutritionInfo extends Module
         $aminoacidi = array();
         if (is_array($aaNomi)) {
             foreach ($aaNomi as $i => $nome) {
-                $nome = trim($nome);
+                $nome = strip_tags(trim($nome));
                 if (!empty($nome)) {
                     $allowedUnits = array('mg', 'g');
                     $unita = isset($aaUnita[$i]) && in_array($aaUnita[$i], $allowedUnits) ? $aaUnita[$i] : 'g';
@@ -262,7 +262,7 @@ class Ms_NutritionInfo extends Module
                 }
             }
         }
-        $nutrition->acidi_aminici = !empty($aminoacidi) ? json_encode($aminoacidi) : null;
+        $nutrition->acidi_aminici = !empty($aminoacidi) ? json_encode($aminoacidi, JSON_UNESCAPED_UNICODE) : null;
 
         // Campi testo
         $nutrition->ingredienti = Tools::getValue('nutrition_ingredienti', '');
@@ -286,6 +286,30 @@ class Ms_NutritionInfo extends Module
     {
         $id_product = (int) $params['id_product'];
         ProductNutrition::deleteByProductId($id_product);
+    }
+
+    /**
+     * Rimuove attributi pericolosi (event handler on*, style, href javascript:) dai tag HTML.
+     *
+     * @param string $html
+     * @return string
+     */
+    private function stripDangerousAttributes($html)
+    {
+        if (empty($html)) {
+            return $html;
+        }
+
+        // Rimuovi tutti gli attributi on* (onclick, onmouseover, onanimationend, ecc.)
+        $html = preg_replace('/(<[^>]+)\s+on\w+\s*=\s*"[^"]*"/i', '$1', $html);
+        $html = preg_replace('/(<[^>]+)\s+on\w+\s*=\s*\'[^\']*\'/i', '$1', $html);
+        $html = preg_replace('/(<[^>]+)\s+on\w+\s*=\s*[^\s>]*/i', '$1', $html);
+
+        // Rimuovi attributi style (possibile injection CSS)
+        $html = preg_replace('/(<[^>]+)\s+style\s*=\s*"[^"]*"/i', '$1', $html);
+        $html = preg_replace('/(<[^>]+)\s+style\s*=\s*\'[^\']*\'/i', '$1', $html);
+
+        return $html;
     }
 
     /* =========================================================================
@@ -331,6 +355,10 @@ class Ms_NutritionInfo extends Module
         $allowedTags = '<b><strong><i><em><br><p><ul><ol><li><span>';
         $safeIngredienti = !empty($nutrition->ingredienti) ? strip_tags($nutrition->ingredienti, $allowedTags) : '';
         $safeAllergeni = !empty($nutrition->allergeni) ? strip_tags($nutrition->allergeni, $allowedTags) : '';
+
+        // Rimuovi tutti gli attributi evento (on*) e attributi pericolosi dai tag consentiti
+        $safeIngredienti = $this->stripDangerousAttributes($safeIngredienti);
+        $safeAllergeni = $this->stripDangerousAttributes($safeAllergeni);
 
         // Determina se mostrare la colonna per porzione
         $showPorzione = (bool) $nutrition->porzione_attiva;
