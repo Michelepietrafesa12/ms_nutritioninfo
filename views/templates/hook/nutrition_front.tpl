@@ -36,15 +36,15 @@
                 <tr class="ms-nutrition-row ms-nutrition-separator">
                     <td class="ms-nutrition-label">{l s='Energia' mod='ms_nutritioninfo'}</td>
                     <td class="ms-nutrition-value">
-                        {if $nutrition->energia_kcal !== null}{$nutrition->energia_kcal|string_format:"%.2f"|replace:'.':','} kcal{/if}
+                        {if $nutrition->energia_kcal !== null}{$nutrition->energia_kcal|string_format:"%.2f"|replace:'.':$decimal_separator} kcal{/if}
                         {if $nutrition->energia_kcal !== null && $nutrition->energia_kj !== null} / {/if}
-                        {if $nutrition->energia_kj !== null}{$nutrition->energia_kj|string_format:"%.2f"|replace:'.':','} kJ{/if}
+                        {if $nutrition->energia_kj !== null}{$nutrition->energia_kj|string_format:"%.2f"|replace:'.':$decimal_separator} kJ{/if}
                     </td>
                     {if $show_porzione}
                         <td class="ms-nutrition-value">
-                            {if $nutrition->energia_kcal_porzione !== null}{$nutrition->energia_kcal_porzione|string_format:"%.2f"|replace:'.':','} kcal{/if}
+                            {if $nutrition->energia_kcal_porzione !== null}{$nutrition->energia_kcal_porzione|string_format:"%.2f"|replace:'.':$decimal_separator} kcal{/if}
                             {if $nutrition->energia_kcal_porzione !== null && $nutrition->energia_kj_porzione !== null} / {/if}
-                            {if $nutrition->energia_kj_porzione !== null}{$nutrition->energia_kj_porzione|string_format:"%.2f"|replace:'.':','} kJ{/if}
+                            {if $nutrition->energia_kj_porzione !== null}{$nutrition->energia_kj_porzione|string_format:"%.2f"|replace:'.':$decimal_separator} kJ{/if}
                         </td>
                     {/if}
                 </tr>
@@ -54,9 +54,9 @@
             {if $nutrition->grassi !== null}
                 <tr class="ms-nutrition-row ms-nutrition-separator">
                     <td class="ms-nutrition-label">{l s='Grassi' mod='ms_nutritioninfo'}</td>
-                    <td class="ms-nutrition-value">{$nutrition->grassi|string_format:"%.1f"|replace:'.':','} g</td>
+                    <td class="ms-nutrition-value">{$nutrition->grassi|string_format:"%.1f"|replace:'.':$decimal_separator} g</td>
                     {if $show_porzione}
-                        <td class="ms-nutrition-value">{if $nutrition->grassi_porzione !== null}{$nutrition->grassi_porzione|string_format:"%.1f"|replace:'.':','} g{/if}</td>
+                        <td class="ms-nutrition-value">{if $nutrition->grassi_porzione !== null}{$nutrition->grassi_porzione|string_format:"%.1f"|replace:'.':$decimal_separator} g{/if}</td>
                     {/if}
                 </tr>
             {/if}
@@ -64,9 +64,9 @@
             {if $nutrition->grassi_saturi !== null}
                 <tr class="ms-nutrition-row ms-nutrition-sub-row">
                     <td class="ms-nutrition-label ms-nutrition-indent">{l s='di cui acidi grassi saturi' mod='ms_nutritioninfo'}</td>
-                    <td class="ms-nutrition-value">{$nutrition->grassi_saturi|string_format:"%.1f"|replace:'.':','} g</td>
+                    <td class="ms-nutrition-value">{$nutrition->grassi_saturi|string_format:"%.1f"|replace:'.':$decimal_separator} g</td>
                     {if $show_porzione}
-                        <td class="ms-nutrition-value">{if $nutrition->grassi_saturi_porzione !== null}{$nutrition->grassi_saturi_porzione|string_format:"%.1f"|replace:'.':','} g{/if}</td>
+                        <td class="ms-nutrition-value">{if $nutrition->grassi_saturi_porzione !== null}{$nutrition->grassi_saturi_porzione|string_format:"%.1f"|replace:'.':$decimal_separator} g{/if}</td>
                     {/if}
                 </tr>
             {/if}
@@ -74,9 +74,9 @@
             {if $nutrition->grassi_monoinsaturi !== null && $nutrition->grassi_monoinsaturi > 0}
                 <tr class="ms-nutrition-row ms-nutrition-sub-row">
                     <td class="ms-nutrition-label ms-nutrition-indent">{l s='di cui acidi grassi monoinsaturi' mod='ms_nutritioninfo'}</td>
-                    <td class="ms-nutrition-value">{$nutrition->grassi_monoinsaturi|string_format:"%.1f"|replace:'.':','} g</td>
+                    <td class="ms-nutrition-value">{$nutrition->grassi_monoinsaturi|string_format:"%.1f"|replace:'.':$decimal_separator} g</td>
                     {if $show_porzione}
-                        <td class="ms-nutrition-value">{if $nutrition->grassi_monoinsaturi_porzione !== null}{$nutrition->grassi_monoinsaturi_porzione|string_format:"%.1f"|replace:'.':','} g{/if}</td>
+                        <td class="ms-nutrition-value">{if $nutrition->grassi_monoinsaturi_porzione !== null}{$nutrition->grassi_monoinsaturi_porzione|string_format:"%.1f"|replace:'.':$decimal_separator} g{/if}</td>
                     {/if}
                 </tr>
             {/if}
@@ -84,9 +84,9 @@
             {if $nutrition->grassi_polinsaturi !== null && $nutrition->grassi_polinsaturi > 0}
                 <tr class="ms-nutrition-row ms-nutrition-sub-row">
                     <td class="ms-nutrition-label ms-nutrition-indent">{l s='di cui acidi grassi polinsaturi' mod='ms_nutritioninfo'}</td>
-                    <td class="ms-nutrition-value">{$nutrition->grassi_polinsaturi|string_format:"%.1f"|replace:'.':','} g</td>
+                    <td class="ms-nutrition-value">{$nutrition->grassi_polinsaturi|string_format:"%.1f"|replace:'.':$decimal_separator} g</td>
                     {if $show_porzione}
-                        <td class="ms-nutrition-value">{if $nutrition->grassi_polinsaturi_porzione !== null}{$nutrition->grassi_polinsaturi_porzione|string_format:"%.1f"|replace:'.':','} g{/if}</td>
+                        <td class="ms-nutrition-value">{if $nutrition->grassi_polinsaturi_porzione !== null}{$nutrition->grassi_polinsaturi_porzione|string_format:"%.1f"|replace:'.':$decimal_separator} g{/if}</td>
                     {/if}
                 </tr>
             {/if}
@@ -95,9 +95,9 @@
             {if $nutrition->carboidrati !== null}
                 <tr class="ms-nutrition-row ms-nutrition-separator">
                     <td class="ms-nutrition-label">{l s='Carboidrati' mod='ms_nutritioninfo'}</td>
-                    <td class="ms-nutrition-value">{$nutrition->carboidrati|string_format:"%.1f"|replace:'.':','} g</td>
+                    <td class="ms-nutrition-value">{$nutrition->carboidrati|string_format:"%.1f"|replace:'.':$decimal_separator} g</td>
                     {if $show_porzione}
-                        <td class="ms-nutrition-value">{if $nutrition->carboidrati_porzione !== null}{$nutrition->carboidrati_porzione|string_format:"%.1f"|replace:'.':','} g{/if}</td>
+                        <td class="ms-nutrition-value">{if $nutrition->carboidrati_porzione !== null}{$nutrition->carboidrati_porzione|string_format:"%.1f"|replace:'.':$decimal_separator} g{/if}</td>
                     {/if}
                 </tr>
             {/if}
@@ -105,9 +105,9 @@
             {if $nutrition->zuccheri !== null}
                 <tr class="ms-nutrition-row ms-nutrition-sub-row">
                     <td class="ms-nutrition-label ms-nutrition-indent">{l s='di cui zuccheri' mod='ms_nutritioninfo'}</td>
-                    <td class="ms-nutrition-value">{$nutrition->zuccheri|string_format:"%.1f"|replace:'.':','} g</td>
+                    <td class="ms-nutrition-value">{$nutrition->zuccheri|string_format:"%.1f"|replace:'.':$decimal_separator} g</td>
                     {if $show_porzione}
-                        <td class="ms-nutrition-value">{if $nutrition->zuccheri_porzione !== null}{$nutrition->zuccheri_porzione|string_format:"%.1f"|replace:'.':','} g{/if}</td>
+                        <td class="ms-nutrition-value">{if $nutrition->zuccheri_porzione !== null}{$nutrition->zuccheri_porzione|string_format:"%.1f"|replace:'.':$decimal_separator} g{/if}</td>
                     {/if}
                 </tr>
             {/if}
@@ -115,9 +115,9 @@
             {if $nutrition->polialcoli !== null && $nutrition->polialcoli > 0}
                 <tr class="ms-nutrition-row ms-nutrition-sub-row">
                     <td class="ms-nutrition-label ms-nutrition-indent">{l s='di cui polialcoli' mod='ms_nutritioninfo'}</td>
-                    <td class="ms-nutrition-value">{$nutrition->polialcoli|string_format:"%.1f"|replace:'.':','} g</td>
+                    <td class="ms-nutrition-value">{$nutrition->polialcoli|string_format:"%.1f"|replace:'.':$decimal_separator} g</td>
                     {if $show_porzione}
-                        <td class="ms-nutrition-value">{if $nutrition->polialcoli_porzione !== null}{$nutrition->polialcoli_porzione|string_format:"%.1f"|replace:'.':','} g{/if}</td>
+                        <td class="ms-nutrition-value">{if $nutrition->polialcoli_porzione !== null}{$nutrition->polialcoli_porzione|string_format:"%.1f"|replace:'.':$decimal_separator} g{/if}</td>
                     {/if}
                 </tr>
             {/if}
@@ -125,9 +125,9 @@
             {if $nutrition->amido !== null && $nutrition->amido > 0}
                 <tr class="ms-nutrition-row ms-nutrition-sub-row">
                     <td class="ms-nutrition-label ms-nutrition-indent">{l s='di cui amido' mod='ms_nutritioninfo'}</td>
-                    <td class="ms-nutrition-value">{$nutrition->amido|string_format:"%.1f"|replace:'.':','} g</td>
+                    <td class="ms-nutrition-value">{$nutrition->amido|string_format:"%.1f"|replace:'.':$decimal_separator} g</td>
                     {if $show_porzione}
-                        <td class="ms-nutrition-value">{if $nutrition->amido_porzione !== null}{$nutrition->amido_porzione|string_format:"%.1f"|replace:'.':','} g{/if}</td>
+                        <td class="ms-nutrition-value">{if $nutrition->amido_porzione !== null}{$nutrition->amido_porzione|string_format:"%.1f"|replace:'.':$decimal_separator} g{/if}</td>
                     {/if}
                 </tr>
             {/if}
@@ -136,9 +136,9 @@
             {if $nutrition->fibre !== null}
                 <tr class="ms-nutrition-row ms-nutrition-separator">
                     <td class="ms-nutrition-label">{l s='Fibre' mod='ms_nutritioninfo'}</td>
-                    <td class="ms-nutrition-value">{$nutrition->fibre|string_format:"%.1f"|replace:'.':','} g</td>
+                    <td class="ms-nutrition-value">{$nutrition->fibre|string_format:"%.1f"|replace:'.':$decimal_separator} g</td>
                     {if $show_porzione}
-                        <td class="ms-nutrition-value">{if $nutrition->fibre_porzione !== null}{$nutrition->fibre_porzione|string_format:"%.1f"|replace:'.':','} g{/if}</td>
+                        <td class="ms-nutrition-value">{if $nutrition->fibre_porzione !== null}{$nutrition->fibre_porzione|string_format:"%.1f"|replace:'.':$decimal_separator} g{/if}</td>
                     {/if}
                 </tr>
             {/if}
@@ -147,9 +147,9 @@
             {if $nutrition->proteine !== null}
                 <tr class="ms-nutrition-row ms-nutrition-separator">
                     <td class="ms-nutrition-label">{l s='Proteine' mod='ms_nutritioninfo'}</td>
-                    <td class="ms-nutrition-value">{$nutrition->proteine|string_format:"%.1f"|replace:'.':','} g</td>
+                    <td class="ms-nutrition-value">{$nutrition->proteine|string_format:"%.1f"|replace:'.':$decimal_separator} g</td>
                     {if $show_porzione}
-                        <td class="ms-nutrition-value">{if $nutrition->proteine_porzione !== null}{$nutrition->proteine_porzione|string_format:"%.1f"|replace:'.':','} g{/if}</td>
+                        <td class="ms-nutrition-value">{if $nutrition->proteine_porzione !== null}{$nutrition->proteine_porzione|string_format:"%.1f"|replace:'.':$decimal_separator} g{/if}</td>
                     {/if}
                 </tr>
             {/if}
@@ -158,9 +158,9 @@
             {if $nutrition->sale !== null}
                 <tr class="ms-nutrition-row ms-nutrition-separator">
                     <td class="ms-nutrition-label">{l s='Sale' mod='ms_nutritioninfo'}</td>
-                    <td class="ms-nutrition-value">{$nutrition->sale|string_format:"%.2f"|replace:'.':','} g</td>
+                    <td class="ms-nutrition-value">{$nutrition->sale|string_format:"%.2f"|replace:'.':$decimal_separator} g</td>
                     {if $show_porzione}
-                        <td class="ms-nutrition-value">{if $nutrition->sale_porzione !== null}{$nutrition->sale_porzione|string_format:"%.2f"|replace:'.':','} g{/if}</td>
+                        <td class="ms-nutrition-value">{if $nutrition->sale_porzione !== null}{$nutrition->sale_porzione|string_format:"%.2f"|replace:'.':$decimal_separator} g{/if}</td>
                     {/if}
                 </tr>
             {/if}

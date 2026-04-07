@@ -275,7 +275,9 @@ class Ms_NutritionInfo extends Module
         }
         $nutrition->date_upd = date('Y-m-d H:i:s');
 
-        $nutrition->save();
+        if (!$nutrition->save()) {
+            $this->context->controller->errors[] = $this->l('Errore nel salvataggio dei valori nutrizionali.');
+        }
     }
 
     /* =========================================================================
@@ -383,6 +385,16 @@ class Ms_NutritionInfo extends Module
         // Numero di colonne della tabella
         $colspan = $showPorzione ? 3 : 2;
 
+        // Separatore decimale in base alla lingua attiva
+        $language = $this->context->language;
+        $decimalSeparator = ',';
+        if ($language && !empty($language->iso_code)) {
+            $dotLocales = array('en', 'zh', 'ja', 'ko', 'th');
+            if (in_array($language->iso_code, $dotLocales)) {
+                $decimalSeparator = '.';
+            }
+        }
+
         $this->context->smarty->assign(array(
             'nutrition' => $nutrition,
             'vitamine_minerali' => $vitamine_minerali,
@@ -392,6 +404,7 @@ class Ms_NutritionInfo extends Module
             'safe_allergeni' => $safeAllergeni,
             'show_porzione' => $showPorzione,
             'colspan' => $colspan,
+            'decimal_separator' => $decimalSeparator,
         ));
 
         $content = $this->display(__FILE__, 'views/templates/hook/nutrition_front.tpl');

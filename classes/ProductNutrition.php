@@ -283,14 +283,15 @@ class ProductNutrition extends ObjectModel
         $id_product = (int) $id_product;
 
         $sql = new DbQuery();
-        $sql->select('id_nutrition');
+        $sql->select('*');
         $sql->from('product_nutrition');
         $sql->where('id_product = ' . $id_product);
 
-        $id_nutrition = (int) Db::getInstance()->getValue($sql);
+        $row = Db::getInstance()->getRow($sql);
 
-        if ($id_nutrition > 0) {
-            $obj = new ProductNutrition($id_nutrition);
+        if ($row) {
+            $obj = new ProductNutrition();
+            $obj->hydrate($row);
             if (Validate::isLoadedObject($obj)) {
                 return $obj;
             }
