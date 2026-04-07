@@ -23,7 +23,7 @@ class Ms_NutritionInfo extends Module
     {
         $this->name = 'ms_nutritioninfo';
         $this->tab = 'front_office_features';
-        $this->version = '1.0.0';
+        $this->version = '1.0.1';
         $this->author = 'Michele Pietrafesa';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = array('min' => '1.7.6.0', 'max' => _PS_VERSION_);
@@ -318,7 +318,7 @@ class Ms_NutritionInfo extends Module
         $doc = new DOMDocument();
         $internalErrors = libxml_use_internal_errors(true);
         $doc->loadHTML(
-            '<html><body>' . mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8') . '</body></html>',
+            '<?xml encoding="UTF-8"><html><body>' . $html . '</body></html>',
             LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
         );
         libxml_clear_errors();
