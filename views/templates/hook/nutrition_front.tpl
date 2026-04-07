@@ -71,7 +71,7 @@
                 </tr>
             {/if}
 
-            {if $nutrition->grassi_monoinsaturi !== null && $nutrition->grassi_monoinsaturi > 0}
+            {if $nutrition->grassi_monoinsaturi !== null}
                 <tr class="ms-nutrition-row ms-nutrition-sub-row">
                     <td class="ms-nutrition-label ms-nutrition-indent">{l s='di cui acidi grassi monoinsaturi' mod='ms_nutritioninfo'}</td>
                     <td class="ms-nutrition-value">{$nutrition->grassi_monoinsaturi|string_format:"%.1f"|replace:'.':$decimal_separator} g</td>
@@ -81,7 +81,7 @@
                 </tr>
             {/if}
 
-            {if $nutrition->grassi_polinsaturi !== null && $nutrition->grassi_polinsaturi > 0}
+            {if $nutrition->grassi_polinsaturi !== null}
                 <tr class="ms-nutrition-row ms-nutrition-sub-row">
                     <td class="ms-nutrition-label ms-nutrition-indent">{l s='di cui acidi grassi polinsaturi' mod='ms_nutritioninfo'}</td>
                     <td class="ms-nutrition-value">{$nutrition->grassi_polinsaturi|string_format:"%.1f"|replace:'.':$decimal_separator} g</td>
@@ -112,7 +112,7 @@
                 </tr>
             {/if}
 
-            {if $nutrition->polialcoli !== null && $nutrition->polialcoli > 0}
+            {if $nutrition->polialcoli !== null}
                 <tr class="ms-nutrition-row ms-nutrition-sub-row">
                     <td class="ms-nutrition-label ms-nutrition-indent">{l s='di cui polialcoli' mod='ms_nutritioninfo'}</td>
                     <td class="ms-nutrition-value">{$nutrition->polialcoli|string_format:"%.1f"|replace:'.':$decimal_separator} g</td>
@@ -122,7 +122,7 @@
                 </tr>
             {/if}
 
-            {if $nutrition->amido !== null && $nutrition->amido > 0}
+            {if $nutrition->amido !== null}
                 <tr class="ms-nutrition-row ms-nutrition-sub-row">
                     <td class="ms-nutrition-label ms-nutrition-indent">{l s='di cui amido' mod='ms_nutritioninfo'}</td>
                     <td class="ms-nutrition-value">{$nutrition->amido|string_format:"%.1f"|replace:'.':$decimal_separator} g</td>

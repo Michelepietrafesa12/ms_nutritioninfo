@@ -292,6 +292,9 @@ class ProductNutrition extends ObjectModel
         if ($row) {
             $obj = new ProductNutrition();
             $obj->hydrate($row);
+            if (isset($row['id_nutrition'])) {
+                $obj->id_nutrition = (int) $row['id_nutrition'];
+            }
             if (Validate::isLoadedObject($obj)) {
                 return $obj;
             }

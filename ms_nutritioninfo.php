@@ -13,6 +13,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use PrestaShop\PrestaShop\Core\Product\ProductExtraContent;
+
 require_once dirname(__FILE__) . '/classes/ProductNutrition.php';
 
 class Ms_NutritionInfo extends Module
@@ -313,22 +315,42 @@ class Ms_NutritionInfo extends Module
             return $html;
         }
 
-        // Rimuovi tutti gli attributi on* (onclick, onmouseover, onanimationend, ecc.)
-        $html = preg_replace('/(<[^>]+)\s+on\w+\s*=\s*"[^"]*"/i', '$1', $html);
-        $html = preg_replace('/(<[^>]+)\s+on\w+\s*=\s*\'[^\']*\'/i', '$1', $html);
-        $html = preg_replace('/(<[^>]+)\s+on\w+\s*=\s*[^\s>]*/i', '$1', $html);
+        $doc = new DOMDocument();
+        $internalErrors = libxml_use_internal_errors(true);
+        $doc->loadHTML(
+            '<html><body>' . mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8') . '</body></html>',
+            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+        );
+        libxml_clear_errors();
+        libxml_use_internal_errors($internalErrors);
 
-        // Rimuovi attributi style (possibile injection CSS)
-        $html = preg_replace('/(<[^>]+)\s+style\s*=\s*"[^"]*"/i', '$1', $html);
-        $html = preg_replace('/(<[^>]+)\s+style\s*=\s*\'[^\']*\'/i', '$1', $html);
-        $html = preg_replace('/(<[^>]+)\s+style\s*=\s*[^\s>]*/i', '$1', $html);
+        $xpath = new DOMXPath($doc);
+        $nodes = $xpath->query('//*');
 
-        // Rimuovi href="javascript:" (quoted e unquoted)
-        $html = preg_replace('/(<[^>]+\s+)href\s*=\s*"[^"]*javascript:[^"]*"/i', '$1href="#"', $html);
-        $html = preg_replace('/(<[^>]+\s+)href\s*=\s*\'[^\']*javascript:[^\']*\'/i', '$1href="#"', $html);
-        $html = preg_replace('/(<[^>]+\s+)href\s*=\s*javascript:[^\s>]*/i', '$1href="#"', $html);
+        foreach ($nodes as $node) {
+            $attrsToRemove = array();
+            foreach ($node->attributes as $attr) {
+                $name = strtolower($attr->name);
+                if (strpos($name, 'on') === 0) {
+                    $attrsToRemove[] = $attr->name;
+                } elseif ($name === 'style') {
+                    $attrsToRemove[] = $attr->name;
+                } elseif ($name === 'href' && preg_match('/^\s*javascript\s*:/i', $attr->value)) {
+                    $attrsToRemove[] = $attr->name;
+                }
+            }
+            foreach ($attrsToRemove as $attrName) {
+                $node->removeAttribute($attrName);
+            }
+        }
 
-        return $html;
+        $body = $doc->getElementsByTagName('body')->item(0);
+        $result = '';
+        foreach ($body->childNodes as $child) {
+            $result .= $doc->saveHTML($child);
+        }
+
+        return $result;
     }
 
     /* =========================================================================
@@ -385,12 +407,12 @@ class Ms_NutritionInfo extends Module
         // Numero di colonne della tabella
         $colspan = $showPorzione ? 3 : 2;
 
-        // Separatore decimale in base alla lingua attiva
-        $language = $this->context->language;
+        // Separatore decimale in base alla locale attiva di PrestaShop
         $decimalSeparator = ',';
-        if ($language && !empty($language->iso_code)) {
-            $dotLocales = array('en', 'zh', 'ja', 'ko', 'th');
-            if (in_array($language->iso_code, $dotLocales)) {
+        if (method_exists($this->context, 'getCurrentLocale') && $this->context->getCurrentLocale()) {
+            $locale = $this->context->getCurrentLocale();
+            $formatted = $locale->formatNumber(1.1);
+            if (strpos($formatted, '.') !== false) {
                 $decimalSeparator = '.';
             }
         }
@@ -409,7 +431,7 @@ class Ms_NutritionInfo extends Module
 
         $content = $this->display(__FILE__, 'views/templates/hook/nutrition_front.tpl');
 
-        $tab = new PrestaShop\PrestaShop\Core\Product\ProductExtraContent();
+        $tab = new ProductExtraContent();
         $tab->setTitle($this->l('Valori Nutrizionali'));
         $tab->setContent($content);
 
