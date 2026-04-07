@@ -23,7 +23,7 @@ class Ms_NutritionInfo extends Module
     {
         $this->name = 'ms_nutritioninfo';
         $this->tab = 'front_office_features';
-        $this->version = '1.0.1';
+        $this->version = '1.1.0';
         $this->author = 'Michele Pietrafesa';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = array('min' => '1.7.6.0', 'max' => _PS_VERSION_);
@@ -51,7 +51,8 @@ class Ms_NutritionInfo extends Module
             && $this->registerHook('actionProductDelete')
             && $this->registerHook('displayProductExtraContent')
             && $this->registerHook('displayHeader')
-            && $this->registerHook('displayBackOfficeHeader');
+            && $this->registerHook('displayBackOfficeHeader')
+            && $this->registerHook('displayMsNutritionInfo');
     }
 
     /**
@@ -353,14 +354,19 @@ class Ms_NutritionInfo extends Module
         return $result;
     }
 
-    /* =========================================================================
-     * HOOK: displayProductExtraContent
-     * Mostra la tab con la tabella nutrizionale nel front-end
-     * ========================================================================= */
-
-    public function hookDisplayProductExtraContent($params)
+    /**
+     * Prepara i dati nutrizionali per il rendering front-end.
+     *
+     * Carica, decodifica e sanitizza tutti i dati nutrizionali del prodotto,
+     * restituendo l'array di variabili pronte per l'assign Smarty.
+     * Restituisce array vuoto se il prodotto non ha dati nutrizionali attivi.
+     *
+     * @param int $id_product
+     * @return array Variabili Smarty o array vuoto
+     */
+    private function prepareNutritionData($id_product)
     {
-        $id_product = (int) $params['product']->id;
+        $id_product = (int) $id_product;
         $nutrition = ProductNutrition::getByProductId($id_product);
 
         if (!$nutrition || !$nutrition->active || !$nutrition->hasNutritionalData()) {
@@ -417,7 +423,7 @@ class Ms_NutritionInfo extends Module
             }
         }
 
-        $this->context->smarty->assign(array(
+        return array(
             'nutrition' => $nutrition,
             'vitamine_minerali' => $vitamine_minerali,
             'acidi_aminici' => $acidi_aminici,
@@ -427,7 +433,47 @@ class Ms_NutritionInfo extends Module
             'show_porzione' => $showPorzione,
             'colspan' => $colspan,
             'decimal_separator' => $decimalSeparator,
-        ));
+        );
+    }
+
+    /* =========================================================================
+     * HOOK: displayMsNutritionInfo
+     * Renderizza la tabella nutrizionale come HTML diretto per Creative Elements.
+     *
+     * In Creative Elements: trascina il widget "Hook" e imposta il nome hook
+     * "displayMsNutritionInfo". Il modulo renderizza la tabella nutrizionale
+     * come HTML diretto, posizionabile liberamente nel builder.
+     * ========================================================================= */
+
+    public function hookDisplayMsNutritionInfo($params)
+    {
+        $id_product = (int) $params['product']->id;
+        $data = $this->prepareNutritionData($id_product);
+
+        if (empty($data)) {
+            return '';
+        }
+
+        $this->context->smarty->assign($data);
+
+        return $this->display(__FILE__, 'views/templates/hook/nutrition_front.tpl');
+    }
+
+    /* =========================================================================
+     * HOOK: displayProductExtraContent
+     * Mostra la tab con la tabella nutrizionale nel front-end
+     * ========================================================================= */
+
+    public function hookDisplayProductExtraContent($params)
+    {
+        $id_product = (int) $params['product']->id;
+        $data = $this->prepareNutritionData($id_product);
+
+        if (empty($data)) {
+            return array();
+        }
+
+        $this->context->smarty->assign($data);
 
         $content = $this->display(__FILE__, 'views/templates/hook/nutrition_front.tpl');
 
