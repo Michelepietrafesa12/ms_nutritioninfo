@@ -45,6 +45,7 @@ class Ms_NutritionInfo extends Module
             && $this->executeSqlFile('install')
             && $this->registerHook('displayAdminProductsExtra')
             && $this->registerHook('actionProductUpdate')
+            && $this->registerHook('actionProductAdd')
             && $this->registerHook('actionProductDelete')
             && $this->registerHook('displayProductExtraContent')
             && $this->registerHook('displayHeader')
@@ -278,6 +279,16 @@ class Ms_NutritionInfo extends Module
     }
 
     /* =========================================================================
+     * HOOK: actionProductAdd
+     * Salva i dati nutrizionali quando un nuovo prodotto viene creato
+     * ========================================================================= */
+
+    public function hookActionProductAdd($params)
+    {
+        return $this->hookActionProductUpdate($params);
+    }
+
+    /* =========================================================================
      * HOOK: actionProductDelete
      * Cancella i dati nutrizionali quando il prodotto viene eliminato
      * ========================================================================= */
@@ -308,6 +319,12 @@ class Ms_NutritionInfo extends Module
         // Rimuovi attributi style (possibile injection CSS)
         $html = preg_replace('/(<[^>]+)\s+style\s*=\s*"[^"]*"/i', '$1', $html);
         $html = preg_replace('/(<[^>]+)\s+style\s*=\s*\'[^\']*\'/i', '$1', $html);
+        $html = preg_replace('/(<[^>]+)\s+style\s*=\s*[^\s>]*/i', '$1', $html);
+
+        // Rimuovi href="javascript:" (quoted e unquoted)
+        $html = preg_replace('/(<[^>]+\s+)href\s*=\s*"[^"]*javascript:[^"]*"/i', '$1href="#"', $html);
+        $html = preg_replace('/(<[^>]+\s+)href\s*=\s*\'[^\']*javascript:[^\']*\'/i', '$1href="#"', $html);
+        $html = preg_replace('/(<[^>]+\s+)href\s*=\s*javascript:[^\s>]*/i', '$1href="#"', $html);
 
         return $html;
     }

@@ -121,7 +121,7 @@ class ProductNutrition extends ObjectModel
             ),
             'porzione' => array(
                 'type' => self::TYPE_STRING,
-                'validate' => 'isGenericName',
+                'validate' => 'isString',
                 'size' => 100,
             ),
             'porzione_attiva' => array(
@@ -130,7 +130,7 @@ class ProductNutrition extends ObjectModel
             ),
             'porzione_descrizione' => array(
                 'type' => self::TYPE_STRING,
-                'validate' => 'isGenericName',
+                'validate' => 'isString',
                 'size' => 100,
             ),
             'energia_kcal' => array(
